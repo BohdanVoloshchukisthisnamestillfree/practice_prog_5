@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <math.h>
+
+
+
+int check(int n) 
+   {
+    int check_count = 0;
+    int consecutiveFives = 0;
+    // перебираємо розряди числа справа наліво (робтмо зсув)
+    while (n > 0) 
+    {
+        int number = n % 10;
+        n /= 10;
+
+        // якщо поточний розряд = 1  - збільшуємо значення лічильника
+        if (number == 1)  
+        
+         {
+            consecutiveFives++;
+            
+            if (consecutiveFives >= 3) 
+             {
+                check_count++;
+                break;
+             }
+         }
+        // обнуляємо лічильник, якщо поточний розряд != 1
+        else 
+          {
+            consecutiveFives = 0;
+          }
+    }
+    return check_count;
+  }
+
+
+int countNumbers(int r) 
+  {
+    // перебираємо можливі випадки...
+    if (r == 1)
+        return 2;  // тільки дві можливості - 1 and 0
+    if (r == 2)
+        return 4;  // чотири можливості -  11, 10, 01, 00
+
+    int current = 0;  // визначаємо загальну кількість можливих варіантів з 
+    // r - розрядним числом
+    int total_count = pow(2, r);
+   
+    for (int i = 0; i < total_count; i++) 
+      {
+        int combinedNumber = 0;
+        for (int j = r - 1; j >= 0; j--) 
+         {
+            int bit = (i >> j) & 1;
+            int digit = bit ? 1 : 0;
+            combinedNumber += digit * pow(10, j);
+         }
+        
+        current += check(combinedNumber);
+      }
+
+    // обраховуємо потрібне значення шляхом віднімання кількості чисел
+    //які не задовільняють умову від всієї кількості варіантів
+    return total_count - current;
+}
+
+int main() 
+  {
+    int r;  // кількість розрядів
+    printf("Enter the number of digits (r): ");//вводимо кількість розрядів
+    scanf("%d", &r);
+
+    if (r>=1)
+      {
+        // викликаємо функцію підрахунку з аргументом r 
+        int count = countNumbers(r);
+
+        // виводимо результат
+        printf("The number of valid numbers with %d digits is: %d\n", r, count);
+        //виводимо кількість послідовностей, які задовільняють умову...
+      } else
+        {
+        printf("You entered a wrong number of digits, it can't be less than 1");
+        //виводимо попередження про невірно задану кількість розрядів
+        }
+    
+    return 0;
+  }
